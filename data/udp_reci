@@ -1,0 +1,47 @@
+#!/bin/bash
+
+source "/opt/loxberry/config/plugins/mirobot2lox/mi.cfg"
+
+socat - udp4-listen:$UDP_PORT,reuseaddr,fork | while read COMMAND
+do
+	if [ "$COMMAND" = "MI_START" ]; then 
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN start
+	echo "MI_START"
+	fi
+    if [ "$COMMAND" = "MI_PAUSE" ]; then 
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN pause
+	echo "MI_PAUSE"
+	fi
+    
+	if [ "$COMMAND" = "MI_DOCK" ]; then 
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN home
+	echo "MI_DOCK"
+	fi
+	
+	if [ "$COMMAND" = "MI_FIND_ME" ]; then 
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN raw_command find_me
+	fi
+	
+	if [ "$COMMAND" = "MI_DND_ON" ]; then 
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN dnd on 12 0 11 59
+	fi
+	if [ "$COMMAND" = "MI_DND_OFF" ]; then 
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN dnd off
+	fi
+	
+	if [ "$COMMAND" = "MI_FAN_Q" ]; then
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN fanspeed 38
+	elif [ "$COMMAND" = "MI_FAN_B" ]; then
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN fanspeed 60
+	elif [ "$COMMAND" = "MI_FAN_T" ]; then
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN fanspeed 77
+	elif [ "$COMMAND" = "MI_FAN_F" ]; then
+	sudo mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN fanspeed 90
+	fi
+	
+	if [ "$COMMAND" = "MI2LOX_RESET" ]; then 
+	sudo service mirobo2lox stop
+	sleep 1
+	sudo service mirobo2lox start
+	fi
+done

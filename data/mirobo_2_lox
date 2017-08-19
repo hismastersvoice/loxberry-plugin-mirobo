@@ -1,0 +1,31 @@
+#!/bin/bash
+
+#DO NOT CHANGE ANYTHING BELOW
+###################################
+cfg_file="/opt/loxberry/config/plugins/mirobot2lox/mi.cfg"
+path="/opt/loxberry/data/plugins/mirobot2lox"
+name="mirobo_2_lox_gsd"
+sed -i 's/;/#/' $cfg_file
+source $cfg_file
+timestamp_1=$(date +%s -r $cfg_file)
+
+if [ "$LOOPTIME" == "" ]; then  LOOPTIME="20"; fi
+
+echo $LOOPTIME
+#LOOP
+i=0
+while true
+do
+while [ $i -eq 0 ] 
+do
+timestamp_2=$(date +%s -r $cfg_file)
+if [ "$timestamp_1" != "$timestamp_2" ]; then
+service mirobo2lox restart
+fi
+#get data an send 2 loxone
+$path/$name >/dev/null 2>&1 &
+i=$[LOOPTIME]
+  done
+sleep 1
+  ((i--))
+done

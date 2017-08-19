@@ -1,0 +1,252 @@
+#!/bin/bash
+
+state_txt_en=( "Unknown 1" "Charger disconnected" "Idle" "Unknown 4" "Cleaning" "Returning home" "Manual mode" "Charging" "Unknown 9" "Paused" "Spot cleaning" "Error" "Unknown 13" "Updating" "Battery fully charged" )
+state_txt_de=( "unbekannt 1" "Ladestation nicht angesteckt" "Ruhe-Position" "unbekannt 4" "Reinigung aktiv" "Sauger fährt zur Ladestation" "manueller Modus" "Akku wird aufgeladen" "unbekannt 9" "Sauger pausiert" "Spot-Reinigung" "Fehler" "unbekannt 13" "Update wird durchgeführt" "Akku voll geladen" )        
+error_txt_en=( "No error" "Laser distance sensor error" "Collision sensor error" "Wheels on top of void, move robot" "Clean hovering sensors, move robot" "Clean main brush" "Clean side brush" "Main wheel stuck?" "Device stuck, clean area" "Dust collector missing" "Clean filter" "Stuck in magnetic barrier" "Low battery" "Charging fault" "Battery fault" "Wall sensors dirty, wipe them" "Place me on flat surface" "Side brushes problem, reboot me" "Suction fan problem" "Unpowered charging station" "Robot not reachable" )
+error_txt_de=( "Keine Fehler" "Laser-Distanz-Sensor" "Kollisions-Sensor" "Räder haben keinen Bodenkontakt" "Boden-Sensoren reinigen" "Hauptbürste reinigen" "Seitenbürste reinigen" "Räder blockiert?" "Sauger blokiert" "Staubbehälter nicht eingesetzt" "Filter reinigen" "Sauger blokiert an magnetische Barriere" "Batterie-Level niedrig" "Ladefehler" "Batteriefehler" "Wandsensoren reinigen" "Sauger auf flachen Untergrund stellen" "Seitenbürste Fehler, Robot neu booten" "Saugmotor/Lüfter Fehler" "Ladestation nicht angesteckt" "Robot nicht erreichbar" )
+
+#DO NOT CHANGE ANYTHING BELOW
+###################################
+source "/opt/loxberry/config/plugins/mirobot2lox/mi.cfg"
+timeout="3"
+
+if [ "$LANGUAGE" == "" ]; then LANGUAGE=0; fi
+if [ "$LOOPTIME" == "" ]; then  LOOPTIME="20"; fi
+
+if [ "$UDP_PORT" == "" ]; then UDP_PORT=0; fi
+
+if [ "$MINISERVER_IP" == "" ]; then MINISERVER_IP=192.168.136.254; fi
+if [ "$MINISERVER_USER" == "" ]; then MINISERVER_USER=0; fi
+if [ "$MINISERVER_PASS" == "" ]; then MINISERVER_PASS=0; fi
+
+if [ "$MI_ROBO_IP" == "" ]; then MI_ROBO_IP=192.168.136.254; fi
+if [ "$MI_ROBO_TOKEN" == "" ]; then MI_ROBO_TOKEN=0; fi
+
+if [ "$SEND_STATUS" == "" ]; then SEND_STATUS=1; fi
+if [ "$SEND_CONSUMABLES" == "" ]; then SEND_CONSUMABLES=1; fi 
+if [ "$SEND_CLEANING_HISTORY" == "" ]; then SEND_CLEANING_HISTORY=1; fi
+
+if [ "$VTI_ERROR" == "" ]; then VTI_ERROR=0; fi
+if [ "$VI_ERROR_CODE" == "" ]; then VI_ERROR_CODE=0; fi
+if [ "$VTI_STATE" == "" ]; then VTI_STATE=0; fi
+if [ "$VI_STATE_CODE" == "" ]; then VI_STATE_CODE=0; fi
+if [ "$VI_BATTERY" == "" ]; then VI_BATTERY=0; fi
+if [ "$VI_FANSPEED" == "" ]; then VI_FANSPEED=0; fi
+if [ "$VI_AREA" == "" ]; then VI_AREA=0; fi
+if [ "$VI_TIME" == "" ]; then VI_TIME=0; fi
+if [ "$VI_DND" == "" ]; then MINISERVER_IP=0; fi
+
+if [ "$VI_MAINBRUSH" == "" ]; then VI_MAINBRUSH=0; fi
+if [ "$VI_SIDEBRUSH" == "" ]; then VI_SIDEBRUSH=0; fi
+if [ "$VI_FILTER" == "" ]; then VI_FILTER=0; fi
+if [ "$VI_SENSOR" == "" ]; then VI_SENSOR=0; fi
+
+if [ "$VI_CH_COUNT" == "" ]; then VI_CH_COUNT=0; fi
+if [ "$VI_CH_AREA" == "" ]; then VI_CH_AREA=0; fi
+if [ "$VI_CH_TIME" == "" ]; then VI_CH_TIME=0; fi
+
+#Status
+status(){
+json=`mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN raw_command get_status`
+echo $json
+json_c=`echo $json | sed 's/[^a-zA-Z0-9 :,_]//g'`
+battery=${json_c#*battery: } 
+battery=$(echo $battery | cut -f1 -d",")
+state_code=${json_c#*state: } 
+state_code=$(echo $state_code | cut -f1 -d",")
+clean_time=${json_c#*clean_time: } 
+clean_time=$(echo $clean_time | cut -f1 -d",")
+clean_time=`echo "scale=0; $clean_time / 60" | bc`
+clean_area=${json_c#*clean_area: } 
+clean_area=$(echo $clean_area | cut -f1 -d",")
+clean_area=`echo "scale=0; $clean_area / 1000000" | bc`
+error_code=${json_c#*error_code: } 
+error_code=$(echo $error_code | cut -f1 -d",")
+fan_power=${json_c#*fan_power: } 
+fan_power=$(echo $fan_power | cut -f1 -d",")
+msg_ver=${json_c#*msg_ver: } 
+msg_ver=$(echo $msg_ver | cut -f1 -d",")
+dnd_enabled=${json_c#*dnd_enabled: } 
+dnd_enabled=$(echo $dnd_enabled | cut -f1 -d",")
+if [ $LANGUAGE == "de" ]; then
+state_txt=${state_txt_de[$state_code -1]}
+error_txt=${error_txt_de[$error_code]}
+if [ $battery == "100" ] && [ $state_code = "8" ]; then
+state_txt=${state_txt_de[14]}
+state_code="15"
+fi
+elif [ $LANGUAGE == "en" ]; then
+state_txt=${state_txt_en[$state_code -1]}
+error_txt=${error_txt_en[$error_code]}
+if [ $battery == "100" ] && [ $state_code = "8" ]; then
+state_txt=${state_txt_en[14]}
+state_code="15"
+fi
+else 
+state_txt=${state_txt_en[$state_code -1]}
+error_txt=${error_txt_en[$error_code]}
+if [ $battery == "100" ] && [ $state_code = "8" ]; then
+state_txt=${state_txt_en[14]}
+state_code="15"
+fi
+fi
+}
+
+#Consumable
+consumables(){
+json=`mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN raw_command get_consumable`
+echo $json
+json_c=`echo $json | sed 's/[^a-zA-Z0-9 :,_]//g'`
+main_brush_work_time=${json_c#*main_brush_work_time: } 
+main_brush_work_time=$(echo $main_brush_work_time | cut -f1 -d",")
+main_brush_work_time=`echo "scale=0; $main_brush_work_time / 60 / 60" | bc`
+side_brush_work_time=${json_c#*side_brush_work_time: } 
+side_brush_work_time=$(echo $side_brush_work_time | cut -f1 -d",")
+side_brush_work_time=`echo "scale=0; $side_brush_work_time / 60 / 60" | bc`
+filter_work_time=${json_c#*filter_work_time: } 
+filter_work_time=$(echo $filter_work_time | cut -f1 -d",")
+filter_work_time=`echo "scale=0; $filter_work_time / 60 / 60" | bc`
+sensor_dirty_time=${json_c#*sensor_dirty_time: } 
+sensor_dirty_time=$(echo $sensor_dirty_time | cut -f1 -d",")
+sensor_dirty_time=`echo "scale=0; $sensor_dirty_time / 60 / 60" | bc`
+}
+
+#Cleaning Summary
+clean_sum(){
+json=`mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN raw_command get_clean_summary`
+echo $json
+json_c=`echo $json | sed 's/[^0-9,]//g'`
+total_cleaning_time=$(echo $json_c | awk -F, '{print $1}')
+total_cleaning_time=`echo "scale=0; $total_cleaning_time / 60" | bc`
+total_cleaning_area=$(echo $json_c | awk -F, '{print $2}')
+total_cleaning_area=`echo "scale=0; $total_cleaning_area / 1000000" | bc`
+total_cleanups=$(echo $json_c | awk -F, '{print $3}')
+}
+
+check_connection(){
+	up=`fping -r 5 $MI_ROBO_IP 2>&1 | grep -c 'alive'`
+if [ $up == 1 ]; then
+    serverok="1"
+    else
+    serverok="0"
+fi
+}
+
+if [ $SEND_STATUS == "1" ]; then
+check_connection
+if [ $serverok == "1" ]; then
+status
+else
+echo "Status: Robot not reachable"
+if [ $LANGUAGE == "de" ]; then
+state_txt=${state_txt_de[11]}
+error_txt=${error_txt_de[20]}
+elif [ $LANGUAGE == "en" ]; then
+state_txt=${state_txt_en[11]}
+error_txt=${error_txt_en[20]}
+else 
+state_txt=${state_txt_en[11]}
+error_txt=${error_txt_en[20]}
+fi
+error_code="11"
+state_code="20"
+fi
+if [ "$error_txt_tmp" != "$error_txt" ] && [ $VTI_ERROR != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VTI$VTI_ERROR/"$error_txt")
+sleep 0.1
+fi
+if [ "$error_code_tmp" != "$error_code" ] && [ $VI_ERROR_CODE != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_ERROR_CODE/"$error_code")
+sleep 0.1
+fi
+if [ "$state_txt_tmp" != "$state_txt" ] && [ $VTI_STATE != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VTI$VTI_STATE/"$state_txt")
+sleep 0.1
+fi
+if [ "$state_code_tmp" != "$state_code" ] && [ $VI_STATE_CODE != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_STATE_CODE/"$state_code")
+sleep 0.1
+fi
+if [ "$battery_tmp" != "$battery" ] && [ $VI_BATTERY != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_BATTERY/"$battery")
+sleep 0.1
+fi
+if [ "$fan_power_tmp" != "$fan_power" ] && [ $VI_FANSPEED != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_FANSPEED/"$fan_power")
+sleep 0.1
+fi
+if [ "$clean_time_tmp" != "$clean_time" ] && [ $VI_TIME != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_TIME/"$clean_time")
+sleep 0.1
+fi
+if [ "$clean_area_tmp" != "$clean_area" ] && [ $VI_AREA != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_AREA/"$clean_area")
+sleep 0.1
+fi
+if [ "$dnd_enabled_tmp" != "$dnd_enabled" ] && [ $VI_DND != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_DND/"$dnd_enabled")
+sleep 0.1
+fi
+error_txt_tmp=$error_txt
+error_code_tmp=$error_code_txt
+state_txt_tmp=$state_txt
+state_code_tmp=$state_code_txt
+battery_tmp=$battery
+fan_power_tmp=$fan_power
+clean_time_tmp=$clean_time
+clean_area_tmp=$clean_area
+dnd_enabled_tmp=$dnd_enabled
+fi
+
+if [ $SEND_CONSUMABLES == "1" ]; then
+check_connection
+if [ $serverok == "1" ]; then
+consumables
+else
+echo "Consumables: Robot not reachable"
+fi
+if [ "$main_brush_work_time_tmp" != "$main_brush_work_time" ] && [ $VI_MAINBRUSH != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_MAINBRUSH/"$main_brush_work_time")
+sleep 0.1
+fi
+if [ "$side_brush_work_time_tmp" != "$side_brush_work_time" ] && [ $VI_SIDEBRUSH != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_SIDEBRUSH/"$side_brush_work_time")
+sleep 0.1
+fi
+if [ "$filter_work_time_tmp" != "$filter_work_time" ] && [ $VI_FILTER != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_FILTER/"$filter_work_time")
+sleep 0.1
+fi
+if [ "$sensor_dirty_time_tmp" != "$sensor_dirty_time" ] && [ $VI_SENSOR != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_SENSOR/"$sensor_dirty_time")
+sleep 0.1
+fi
+main_brush_work_time_tmp=$main_brush_work_time
+side_brush_work_time_tmp=$side_brush_work_time
+filter_work_time_tmp=$filter_work_time
+sensor_dirty_time_tmp=$sensor_dirty_time
+fi
+
+if [ $SEND_CLEANING_HISTORY == "1" ]; then
+check_connection
+if [ $serverok == "1" ]; then
+clean_sum
+else
+echo "Cleaning History: Robot not reachable"
+fi
+if [ "$total_cleanups_tmp" != "$total_cleanups" ] && [ $VI_CH_COUNT != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_CH_COUNT/"$total_cleanups")
+sleep 0.1
+fi
+if [ "$total_cleaning_time_tmp" != "$total_cleaning_time" ] && [ $VI_CH_TIME != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_CH_TIME/"$total_cleaning_time")
+sleep 0.1
+fi
+if [ "$total_cleaning_area_tmp" != "$total_cleaning_area" ] && [ $VI_CH_AREA != "0" ]; then
+output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_CH_AREA/"$total_cleaning_area")
+sleep 0.1
+fi
+total_cleanups_tmp=$total_cleanups
+total_cleaning_time_tmp=$total_cleaning_time
+total_cleaning_area_tmp=$total_cleaning_area
+fi

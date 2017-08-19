@@ -1,0 +1,42 @@
+#!/bin/sh
+
+NAME1="mirobo2lox"
+NAME2="udp_receiver"
+SCRIPTNAME1="mirobo_2_lox"
+SCRIPTPATH1="/opt/loxberry/data/plugins/mirobot2lox"
+SCRIPTNAME2="udp_reci"
+SCRIPTPATH2="/opt/loxberry/data/plugins/mirobot2lox"
+D=`date "+%b %d %H:%M:%S"`
+
+#Install with root permission
+installed_st=$(pip3 list | grep "setuptools" | grep -v grep | wc -l)
+installed_pm=$(pip3 list | grep "python-mirobo" | grep -v grep | wc -l)
+
+if [ $installed_st -eq "0" ]; then
+pip3 install -U pip setuptools
+echo "$D setuptools installed" >> /var/log/mirobo2lox.log
+fi
+if [ $installed_pm -eq "0" ]; then
+pip3 install python-mirobo
+echo "$D python-mirobo installed" >> /var/log/mirobo2lox.log
+fi
+
+#Install ini.d-Services
+FOLDER_INIT="/opt/loxberry/data/plugins/mirobot2lox"
+if [ -d $FOLDER_INIT ]; then	
+cp -rf $FOLDER_INIT/init.d /etc/
+chmod 0755 /etc/init.d/mirobo2lox
+chmod 0755 /opt/loxberry/data/plugins/mirobot2lox/mirobo_2_lox
+chmod 0755 /opt/loxberry/data/plugins/mirobot2lox/mirobo_2_lox_gsd
+chmod 0755 /opt/loxberry/data/plugins/mirobot2lox/udp_reci
+rm -rf $FOLDER_INIT/init.d/*.*
+rm -rf $FOLDER_INIT/init.d/	
+
+echo "$D MiRobo2Lox - Services installed" >> /var/log/mirobo2lox.log
+update-rc.d mirobo2lox defaults 99
+systemctl daemon-reload
+fi
+service mirobo2lox start
+
+
+exit 0 

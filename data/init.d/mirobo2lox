@@ -1,0 +1,97 @@
+#!/bin/sh
+
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          MIRobo2Lox
+# Required-Start:    
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description:       <DESCRIPTION>
+### END INIT INFO
+
+LOGFILE=/var/log/mirobo2lox.log
+
+NAME1="mirobo2lox"
+NAME2="udp_receiver"
+SCRIPTNAME1="mirobo_2_lox"
+SCRIPTPATH1="/opt/loxberry/data/plugins/mirobot2lox"
+SCRIPTNAME2="udp_reci"
+SCRIPTPATH2="/opt/loxberry/data/plugins/mirobot2lox"
+USER="root"
+
+case "$1" in 
+start)
+if [ -f "/var/run/$NAME1.pid" ]; then
+echo "Service $NAME1 läuft bereits" >&2
+else
+su $USER -c "bash -c '$SCRIPTPATH1/$SCRIPTNAME1 &'"
+
+echo $! >/var/run/$NAME1.pid
+if [ -f "/var/run/$NAME1.pid" ]; then
+echo "Service $NAME1 gestartet" >&2
+else
+echo "Service $NAME1 konnte nicht gestartet werden" >&2
+fi
+fi   
+if [ -f "/var/run/$NAME2.pid" ]; then
+echo "Service $NAME2 läuft bereits" >&2  
+else
+su $USER -c "bash -c '$SCRIPTPATH2/$SCRIPTNAME2 &'"
+echo $!>/var/run/$NAME2.pid
+if [ -f "/var/run/$NAME2.pid" ]; then
+echo "Service $NAME2 gestartet" >&2
+else
+echo "Service $NAME2 konnte nicht gestartet werden" >&2
+fi
+fi
+;;
+
+stop)
+
+pid1=$(ps -eo pid,command | grep "$SCRIPTNAME1" | grep -v grep | awk '{print $1}')
+pid2=$(ps -eo pid,command | grep "$SCRIPTNAME2" | grep -v grep | awk '{print $1}')
+
+if ! [ -f "/var/run/$NAME1.pid" ]; then
+echo "Service $NAME1 ist nicht gestartet"
+else
+echo "Service $NAME1 wird beendet"
+kill -9 $pid1
+rm -f /var/run/$NAME1.pid
+fi
+
+if ! [ -f "/var/run/$NAME2.pid" ]; then
+echo "Service $NAME2 ist nicht gestartet"
+else
+echo "Service $NAME2 wird beendet"
+kill -9 $pid2
+rm -f /var/run/$NAME2.pid
+fi
+;;
+
+restart)
+   $0 stop
+   $0 start
+   ;;
+
+status)
+   if [ -e "/var/run/$NAME1.pid" ]; then
+	pid1=$(cat /var/run/$NAME1.pid)
+	echo "Service $NAME1 läuft mit PID $pid1"
+   else
+      echo "Service $NAME1 läuft nicht"
+   fi
+   if [ -e "/var/run/$NAME2.pid" ]; then
+	pid2=$(cat /var/run/$NAME2.pid)
+	echo "Service $NAME2 läuft mit PID $pid2"
+   else
+      echo "Service $NAME2 läuft nicht"
+      exit 1
+   fi   
+   
+   ;;
+*)
+   echo "Usage: $0 {start|stop|status|restart}"
+esac
+
+exit 0 
