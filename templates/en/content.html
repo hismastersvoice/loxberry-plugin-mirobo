@@ -1,317 +1,416 @@
 <div role=\"main\" class=\"ui-content\">
-    <div class=\"ui-body ui-body-a ui-corner-all loxberry-logo\">
-        <div style=\"margin: 5%;\">
-   
-<table valign="bottom">
-<tbody>
+   <div class=\"ui-body ui-body-a ui-corner-all loxberry-logo\">
+      <div style=\"margin: 5%;\">
+      <form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi">
+         <input type="hidden" name="savedata" id="savedata" value="1">
+         <div class="form-group">
+            <table valign="bottom" width="100%">
+               <tbody>
+                  <tr>
+                     <td width="100px" valign="bottom">&nbsp;&nbsp;<img src="../../../system/images/icons/mirobot2lox/icon_512.png" alt="test" width="100" height="100" />&nbsp;</td>
+                     <td align="left" valign="bottom">
+                        <h2> MIRobo2Lox - Settings</h2>
+                     </td>
+                     <td align="right" valign="middle">
+                        <label id="labelmsenabled">
+                           <h3><a href='http://loxberry/admin/system/tools/logfile.cgi?logfile=plugins/mirobot2lox/mirobot2lox.log&header=txt' target='_blank'>Debug&nbsp;</a>&nbsp;</h3>
+                        </label>
+                     </td>
+                     <td valign="middle" width="50">
+                        <fieldset>
+                           <select id="debug" name="debug" data-role="flipswitch">
+                              <!--$select_debug-->
+                           </select>
+                        </fieldset>
+                  </tr>
+               </tbody>
+            </table>
+            <br>
+			<table class="formtable" border="0" width="100%">
 <tr>
-<td valign="bottom">&nbsp;&nbsp;<img src="../../../system/images/icons/mirobot2lox/icon_512.png" alt="test" width="125" height="125" />&nbsp; </td>
-<td valign="bottom"><h2>MIRobo2Lox - Settings</h2></td>
+<td width="25%"><label>Language (Robot Messages)</label></td>
+<td width="50%"><select name="language" data-mini="true"><!--$select_language--></select></td>
+</tr>
+<tr>
+<td width="25%"><label>UDP Port</label></td>
+<td width="50%"><input name="udp_port" type="text" value="<!--$udp_port-->" data-validation-error-msg="* Please enter an free UDP-Port for the Receiver" /></td>
+</tr>
+<tr>
+<td width="25%"><label>Send data ever x seconds</label></td>
+<td width="50%"><input name="looptime" type="text" value="<!--$looptime-->" data-validation-error-msg="* Please enter your LoopTime in seconds 10-99999" /></td>
 </tr>
 </tbody>
-</table><br>
+</table>
+<br />
+<table border="1" width="100%" cellspacing="0" cellpadding="20">
+<tbody>
+<tr>
+<td width="33%">
+<table>
+<tbody>
 
-   
-        <form method="post" data-ajax="false" name="main_form" id="main_form" action="./index.cgi">
-            <input type="hidden" name="savedata" id="savedata" value="1">
-            <div class="form-group">
-                <table class="formtable" border="0" width="100%">
+<tr>
+<td style="vertical-align: middle;">
+<h2>Robot 1</h2>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Robot active</label></td>
+<td width="50%"><fieldset><select name="r1_active" data-role="flipswitch"><!--$r1_select_active--></select></fieldset></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Mi Robot IP</label></td>
+<td width="50%"><input name="r1_mi_robo_ip" type="text" value="<!--$r1_mi_robo_ip-->" data-validation-error-msg="* Please enter the IP from Mi Robot" /></td>
+</tr>
+<tr>
+<td width="25%"><label>Mi Robot Token</label></td>
+<td width="50%"><input name="r1_mi_robo_token" type="text" value="<!--$r1_mi_robo_token-->" data-validation-error-msg="* Please enter Token from Mi Robot" /></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Send Status</label></td>
+<td width="50%"><fieldset><select name="r1_send_status" data-role="flipswitch"><!--$r1_select_status--></select></fieldset></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VTI</strong> State Massage</label></td>
+<td width="50%"><input name="r1_vti_state" type="text" value="<!--$r1_vti_state-->" data-validation-error-msg="* Please enter a VTI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> State-Code</label></td>
+<td width="50%"><input name="r1_vi_state_code" type="text" value="<!--$r1_vi_state_code-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VTI</strong> Error Message</label></td>
+<td width="50%"><input name="r1_vti_error" type="text" value="<!--$r1_vti_error-->" data-validation-error-msg="* Please enter a VTI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Error-Code</label></td>
+<td width="50%"><input name="r1_vi_error_code" type="text" value="<!--$r1_vi_error_code-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Battery</label></td>
+<td width="50%"><input name="r1_vi_battery" type="text" value="<!--$r1_vi_battery-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> FanSpeed</label></td>
+<td width="50%"><input name="r1_vi_fanspeed" type="text" value="<!--$r1_vi_fanspeed-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Area</label></td>
+<td width="50%"><input name="r1_vi_area" type="text" value="<!--$r1_vi_area-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Time</label></td>
+<td width="50%"><input name="r1_vi_time" type="text" value="<!--$r1_vi_time-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> DND</label></td>
+<td width="50%"><input name="r1_vi_dnd" type="text" value="<!--$r1_vi_dnd-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Send Consumables</label></td>
+<td width="50%"><fieldset><select name="r1_send_consumables" data-role="flipswitch"><!--$r1_select_consumables--></select></fieldset></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> MainBrush</label></td>
+<td width="50%"><input name="r1_vi_mainbrush" type="text" value="<!--$r1_vi_mainbrush-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> SideBrush</label></td>
+<td width="50%"><input name="r1_vi_sidebrush" type="text" value="<!--$r1_vi_sidebrush-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Filter</label></td>
+<td width="50%"><input name="r1_vi_filter" type="text" value="<!--$r1_vi_filter-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Sensor</label></td>
+<td width="50%"><input name="r1_vi_sensor" type="text" value="<!--$r1_vi_sensor-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Send Cleaning History</label></td>
+<td width="50%"><fieldset><select name="r1_send_cleaning_history" data-role="flipswitch"><!--$r1_select_chistory--></select></fieldset></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Cleaning History Count</label></td>
+<td width="50%"><input name="r1_vi_ch_count" type="text" value="<!--$r1_vi_ch_count-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Cleaning History Area</label></td>
+<td width="50%"><input name="r1_vi_ch_area" type="text" value="<!--$r1_vi_ch_area-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Cleaning History Time</label></td>
+<td width="50%"><input name="r1_vi_ch_time" type="text" value="<!--$r1_vi_ch_time-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+</tbody>
+</table>
+</td>
+<td width="33%">
+<table>
+<tbody>
+<tr>
+<td>
+<h2>Robot 2</h2>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Robot active</label></td>
+<td width="50%"><fieldset><select name="r2_active" data-role="flipswitch"><!--$r2_select_active--></select></fieldset></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Mi Robot IP</label></td>
+<td width="50%"><input name="r2_mi_robo_ip" type="text" value="<!--$r2_mi_robo_ip-->" data-validation-error-msg="* Please enter the IP from Mi Robot" /></td>
+</tr>
+<tr>
+<td width="25%"><label>Mi Robot Token</label></td>
+<td width="50%"><input name="r2_mi_robo_token" type="text" value="<!--$r2_mi_robo_token-->" data-validation-error-msg="* Please enter Token from Mi Robot" /></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Send Status</label></td>
+<td width="50%"><fieldset><select name="r2_send_status" data-role="flipswitch"><!--$r2_select_status--></select></fieldset></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VTI</strong> State Massage</label></td>
+<td width="50%"><input name="r2_vti_state" type="text" value="<!--$r2_vti_state-->" data-validation-error-msg="* Please enter a VTI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> State-Code</label></td>
+<td width="50%"><input name="r2_vi_state_code" type="text" value="<!--$r2_vi_state_code-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VTI</strong> Error Message</label></td>
+<td width="50%"><input name="r2_vti_error" type="text" value="<!--$r2_vti_error-->" data-validation-error-msg="* Please enter a VTI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Error-Code</label></td>
+<td width="50%"><input name="r2_vi_error_code" type="text" value="<!--$r2_vi_error_code-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Battery</label></td>
+<td width="50%"><input name="r2_vi_battery" type="text" value="<!--$r2_vi_battery-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> FanSpeed</label></td>
+<td width="50%"><input name="r2_vi_fanspeed" type="text" value="<!--$r2_vi_fanspeed-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Area</label></td>
+<td width="50%"><input name="r2_vi_area" type="text" value="<!--$r2_vi_area-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Time</label></td>
+<td width="50%"><input name="r2_vi_time" type="text" value="<!--$r2_vi_time-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> DND</label></td>
+<td width="50%"><input name="r2_vi_dnd" type="text" value="<!--$r2_vi_dnd-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Send Consumables</label></td>
+<td width="50%"><fieldset><select name="r2_send_consumables" data-role="flipswitch"><!--$r2_select_consumables--></select></fieldset></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> MainBrush</label></td>
+<td width="50%"><input name="r2_vi_mainbrush" type="text" value="<!--$r2_vi_mainbrush-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> SideBrush</label></td>
+<td width="50%"><input name="r2_vi_sidebrush" type="text" value="<!--$r2_vi_sidebrush-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Filter</label></td>
+<td width="50%"><input name="r2_vi_filter" type="text" value="<!--$r2_vi_filter-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Sensor</label></td>
+<td width="50%"><input name="r2_vi_sensor" type="text" value="<!--$r2_vi_sensor-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Send Cleaning History</label></td>
+<td width="50%"><fieldset><select name="r2_send_cleaning_history" data-role="flipswitch"><!--$r2_select_chistory--></select></fieldset></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Cleaning History Count</label></td>
+<td width="50%"><input name="r2_vi_ch_count" type="text" value="<!--$r2_vi_ch_count-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Cleaning History Area</label></td>
+<td width="50%"><input name="r2_vi_ch_area" type="text" value="<!--$r2_vi_ch_area-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Cleaning History Time</label></td>
+<td width="50%"><input name="r2_vi_ch_time" type="text" value="<!--$r2_vi_ch_time-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+</tbody>
+</table>
+</td>
+<td width="33%">
+<table>
+<tbody>
+<tr>
+
+<td>
+<h2>Robot 3</h2>
+</td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Robot active</label></td>
+<td width="50%"><fieldset><select name="r3_active" data-role="flipswitch"><!--$r3_select_active--></select></fieldset></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Mi Robot IP</label></td>
+<td width="50%"><input name="r3_mi_robo_ip" type="text" value="<!--$r3_mi_robo_ip-->" data-validation-error-msg="* Please enter the IP from Mi Robot" /></td>
+</tr>
+<tr>
+<td width="25%"><label>Mi Robot Token</label></td>
+<td width="50%"><input name="r3_mi_robo_token" type="text" value="<!--$r3_mi_robo_token-->" data-validation-error-msg="* Please enter Token from Mi Robot" /></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Send Status</label></td>
+<td width="50%"><fieldset><select name="r3_send_status" data-role="flipswitch"><!--$r3_select_status--></select></fieldset></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VTI</strong> State Massage</label></td>
+<td width="50%"><input name="r3_vti_state" type="text" value="<!--$r3_vti_state-->" data-validation-error-msg="* Please enter a VTI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> State-Code</label></td>
+<td width="50%"><input name="r3_vi_state_code" type="text" value="<!--$r3_vi_state_code-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VTI</strong> Error Message</label></td>
+<td width="50%"><input name="r3_vti_error" type="text" value="<!--$r3_vti_error-->" data-validation-error-msg="* Please enter a VTI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Error-Code</label></td>
+<td width="50%"><input name="r3_vi_error_code" type="text" value="<!--$r3_vi_error_code-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Battery</label></td>
+<td width="50%"><input name="r3_vi_battery" type="text" value="<!--$r3_vi_battery-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> FanSpeed</label></td>
+<td width="50%"><input name="r3_vi_fanspeed" type="text" value="<!--$r3_vi_fanspeed-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Area</label></td>
+<td width="50%"><input name="r3_vi_area" type="text" value="<!--$r3_vi_area-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Time</label></td>
+<td width="50%"><input name="r3_vi_time" type="text" value="<!--$r3_vi_time-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> DND</label></td>
+<td width="50%"><input name="r3_vi_dnd" type="text" value="<!--$r3_vi_dnd-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Send Consumables</label></td>
+<td width="50%"><fieldset><select name="r3_send_consumables" data-role="flipswitch"><!--$r3_select_consumables--></select></fieldset></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> MainBrush</label></td>
+<td width="50%"><input name="r3_vi_mainbrush" type="text" value="<!--$r3_vi_mainbrush-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> SideBrush</label></td>
+<td width="50%"><input name="r3_vi_sidebrush" type="text" value="<!--$r3_vi_sidebrush-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Filter</label></td>
+<td width="50%"><input name="r3_vi_filter" type="text" value="<!--$r3_vi_filter-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Sensor</label></td>
+<td width="50%"><input name="r3_vi_sensor" type="text" value="<!--$r3_vi_sensor-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td colspan="2" width="25%"><hr /></td>
+</tr>
+<tr>
+<tr>
+<td width="25%"><label>Send Cleaning History</label></td>
+<td width="50%"><fieldset><select name="r3_send_cleaning_history" data-role="flipswitch"><!--$r3_select_chistory--></select></fieldset></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Cleaning History Count</label></td>
+<td width="50%"><input name="r3_vi_ch_count" type="text" value="<!--$r3_vi_ch_count-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Cleaning History Area</label></td>
+<td width="50%"><input name="r3_vi_ch_area" type="text" value="<!--$r3_vi_ch_area-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+<tr>
+<td width="25%"><label><strong>VI</strong> Cleaning History Time</label></td>
+<td width="50%"><input name="r3_vi_ch_time" type="text" value="<!--$r3_vi_ch_time-->" data-validation-error-msg="* Please enter a VI Number from 0-999" /></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" width="100%" cellspacing="0">
                     <tr>
-                        <td width="25%">
-                            <label id="labellanguage">Language (Robot Messages)</label>
-                        </td>
-                        <td width="50%">
-                            <select id="language" name="language" data-mini="true" ">
-                                <!--$LANGselectlist-->
-                            </select>
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labeludpport">UDP Port</label>
-                        </td>
-                        <td width="50%">
-                            <input id="udp_port" name="udp_port" type="text" class="textfield"
-                                value="<!--$udp_port-->" data-validation-error-msg="* Please enter an free UDP-Port for the Receiver">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labelmiroboip">Mi Robot IP</label>
-                        </td>
-                        <td width="50%">
-                            <input id="mi_robo_ip" name="mi_robo_ip" type="text" class="textfield"
-                                value="<!--$mi_robo_ip-->" data-validation-error-msg="* Please enter the IP from Mi Robot">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labelmiroboip">Mi Robot Token</label>
-                        </td>
-                        <td width="50%">
-                            <input id="mi_robo_token" name="mi_robo_token" type="text" class="textfield"
-                                value="<!--$mi_robo_token-->" data-validation-error-msg="* Please enter Token from Mi Robot">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime">Send data ever x seconds</label>
-                        </td>
-                        <td width="50%">
-                            <input id="looptime" name="looptime" type="text" class="textfield"
-                                value="<!--$looptime-->" data-validation-error-msg="* Please enter your LoopTime in seconds 10-99999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labelmsenabled">Send Status</label>
-                        </td>
-                        <td width="50%">
-                            <fieldset>
-                                <select id="send_status" name="send_status" data-role="flipswitch">
-                                    <!--$Enabledstatus-->
-                                </select>
-                            </fieldset>
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VTI</b> State Massage</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vti_state" name="vti_state" type="text" class="textfield"
-                                value="<!--$vti_state-->" data-validation-error-msg="* Please enter a VTI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> State-Code</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_state_code" name="vi_state_code" type="text" class="textfield"
-                                value="<!--$vi_state_code-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VTI</b> Error Message</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vti_error" name="vti_error" type="text" class="textfield"
-                                value="<!--$vti_error-->" data-validation-error-msg="* Please enter a VTI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> Error-Code</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_error_code" name="vi_error_code" type="text" class="textfield"
-                                value="<!--$vi_error_code-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> Battery</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_battery" name="vi_battery" type="text" class="textfield"
-                                value="<!--$vi_battery-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> FanSpeed</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_fanspeed" name="vi_fanspeed" type="text" class="textfield"
-                                value="<!--$vi_fanspeed-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> Area</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_area" name="vi_area" type="text" class="textfield"
-                                value="<!--$vi_area-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> Time</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_time" name="vi_time" type="text" class="textfield"
-                                value="<!--$vi_time-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> DND</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_dnd" name="vi_dnd" type="text" class="textfield"
-                                value="<!--$vi_dnd-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labelmsenabled">Send Consumables</label>
-                        </td>
-                        <td width="50%">
-                            <fieldset>
-                                <select id="send_consumables" name="send_consumables" data-role="flipswitch">
-                                    <!--$Enabledconsumables-->
-                                </select>
-                            </fieldset>
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> MainBrush</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_mainbrush" name="vi_mainbrush" type="text" class="textfield"
-                                value="<!--$vi_mainbrush-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> SideBrush</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_sidebrush" name="vi_sidebrush" type="text" class="textfield"
-                                value="<!--$vi_sidebrush-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> Filter</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_filter" name="vi_filter" type="text" class="textfield"
-                                value="<!--$vi_filter-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> Sensor</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_sensor" name="vi_sensor" type="text" class="textfield"
-                                value="<!--$vi_sensor-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labelmsenabled">Send Cleaning History</label>
-                        </td>
-                        <td width="50%">
-                            <fieldset>
-                                <select id="send_cleaning_history" name="send_cleaning_history" data-role="flipswitch">
-                                    <!--$Enabledchistory-->
-                                </select>
-                            </fieldset>
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> Cleaning History Count</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_ch_count" name="vi_ch_count" type="text" class="textfield"
-                                value="<!--$vi_ch_count-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> Cleaning History Area</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_ch_area" name="vi_ch_area" type="text" class="textfield"
-                                value="<!--$vi_ch_area-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="25%">
-                            <label id="labellooptime"><b>VI</b> Cleaning History Time</label>
-                        </td>
-                        <td width="50%">
-                            <input id="vi_ch_time" name="vi_ch_time" type="text" class="textfield"
-                                value="<!--$vi_ch_time-->" data-validation-error-msg="* Please enter a VI Number from 0-999">
-                        </td>
-                        <td width="25%">
-                            &nbsp;
+                        <td>
+
                         </td>
                     </tr>
                     <tr>
@@ -324,16 +423,16 @@
                         </td>
                     </tr>
                 </table>
-            </div>
-        </form>
-        <!--$restartMsg-->
-        <script>
-            var $messages = $('#form-error-message');
-            $.validate({
-            	modules : 'security',
-            	errorMessagePosition : $messages,
-            });
-        </script>
-    </div>
 </div>
+</form>
+      <!--$restartMsg-->
+      <script>
+         var $messages = $('#form-error-message');
+         $.validate({
+         	modules : 'security',
+         	errorMessagePosition : $messages,
+         });
+      </script>
+      </div>
+   </div>
 </div>

@@ -10,7 +10,8 @@
 # Description:       <DESCRIPTION>
 ### END INIT INFO
 
-LOGFILE=/var/log/mirobo2lox.log
+LOGFILE="/opt/loxberry/log/plugins/mirobot2lox/mirobot2lox.log"
+D=`date "+%b %d %H:%M:%S"`
 
 NAME1="mirobo2lox"
 NAME2="udp_receiver"
@@ -18,10 +19,23 @@ SCRIPTNAME1="mirobo_2_lox"
 SCRIPTPATH1="/opt/loxberry/data/plugins/mirobot2lox"
 SCRIPTNAME2="udp_reci"
 SCRIPTPATH2="/opt/loxberry/data/plugins/mirobot2lox"
+RAMDISK="/mnt/mi2l_ramdisk"
 USER="root"
 
 case "$1" in 
 start)
+
+if [ ! -d $RAMDISK ]; then
+mkdir $RAMDISK
+fi
+
+if [ -d $RAMDISK ]; then
+chk_ramdisk=$(df -P -T | grep "$RAMDISK" | wc -l)
+if [ "$chk_ramdisk" -eq "0" ]; then
+mount -t tmpfs -o size=4m tmpfs $RAMDISK
+fi
+fi
+
 if [ -f "/var/run/$NAME1.pid" ]; then
 echo "Service $NAME1 läuft bereits" >&2
 else
@@ -30,6 +44,7 @@ su $USER -c "bash -c '$SCRIPTPATH1/$SCRIPTNAME1 &'"
 echo $! >/var/run/$NAME1.pid
 if [ -f "/var/run/$NAME1.pid" ]; then
 echo "Service $NAME1 gestartet" >&2
+echo "$D Service $NAME1 gestartet" >> $LOGFILE
 else
 echo "Service $NAME1 konnte nicht gestartet werden" >&2
 fi
@@ -41,6 +56,7 @@ su $USER -c "bash -c '$SCRIPTPATH2/$SCRIPTNAME2 &'"
 echo $!>/var/run/$NAME2.pid
 if [ -f "/var/run/$NAME2.pid" ]; then
 echo "Service $NAME2 gestartet" >&2
+echo "$D Service $NAME2 gestartet" >> $LOGFILE
 else
 echo "Service $NAME2 konnte nicht gestartet werden" >&2
 fi
@@ -56,6 +72,7 @@ if ! [ -f "/var/run/$NAME1.pid" ]; then
 echo "Service $NAME1 ist nicht gestartet"
 else
 echo "Service $NAME1 wird beendet"
+echo "$D Service $NAME1 wird beendet" >> $LOGFILE
 kill -9 $pid1
 rm -f /var/run/$NAME1.pid
 fi
@@ -64,9 +81,22 @@ if ! [ -f "/var/run/$NAME2.pid" ]; then
 echo "Service $NAME2 ist nicht gestartet"
 else
 echo "Service $NAME2 wird beendet"
+echo "$D Service $NAME2 wird beendet" >> $LOGFILE
 kill -9 $pid2
 rm -f /var/run/$NAME2.pid
 fi
+
+chk_ramdisk=$(df -P -T | grep "$RAMDISK" | wc -l)
+if [ "$chk_ramdisk" -ne "0" ]; then
+umount -f $RAMDISK
+fi
+chk_ramdisk=$(df -P -T | grep "$RAMDISK" | wc -l)
+if [ -d "$RAMDISK" ] && [ "$chk_ramdisk" -eq "0" ]; then
+echo "del"
+rm -rf $RAMDISK/*.*
+rm -rf $RAMDISK
+fi
+
 ;;
 
 restart)

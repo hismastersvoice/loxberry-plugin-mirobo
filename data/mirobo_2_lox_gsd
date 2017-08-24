@@ -9,23 +9,26 @@ error_txt_de=( "Keine Fehler" "Laser-Distanz-Sensor" "Kollisions-Sensor" "Räder
 ###################################
 source "/opt/loxberry/config/plugins/mirobot2lox/mi.cfg"
 timeout="3"
+LOGFILE="/opt/loxberry/log/plugins/mirobot2lox/mirobot2lox.log"
+RAMDISK="/mnt/mi2l_ramdisk"
+D=`date "+%b %d %H:%M:%S"`
+
+#Check Config
+cfg_check()
+{
 
 if [ "$LANGUAGE" == "" ]; then LANGUAGE=0; fi
 if [ "$LOOPTIME" == "" ]; then  LOOPTIME="20"; fi
-
+if [ "$DEBUG" == "" ]; then  DEBUG="0"; fi
 if [ "$UDP_PORT" == "" ]; then UDP_PORT=0; fi
-
 if [ "$MINISERVER_IP" == "" ]; then MINISERVER_IP=192.168.136.254; fi
 if [ "$MINISERVER_USER" == "" ]; then MINISERVER_USER=0; fi
 if [ "$MINISERVER_PASS" == "" ]; then MINISERVER_PASS=0; fi
-
 if [ "$MI_ROBO_IP" == "" ]; then MI_ROBO_IP=192.168.136.254; fi
 if [ "$MI_ROBO_TOKEN" == "" ]; then MI_ROBO_TOKEN=0; fi
-
 if [ "$SEND_STATUS" == "" ]; then SEND_STATUS=1; fi
 if [ "$SEND_CONSUMABLES" == "" ]; then SEND_CONSUMABLES=1; fi 
 if [ "$SEND_CLEANING_HISTORY" == "" ]; then SEND_CLEANING_HISTORY=1; fi
-
 if [ "$VTI_ERROR" == "" ]; then VTI_ERROR=0; fi
 if [ "$VI_ERROR_CODE" == "" ]; then VI_ERROR_CODE=0; fi
 if [ "$VTI_STATE" == "" ]; then VTI_STATE=0; fi
@@ -35,19 +38,162 @@ if [ "$VI_FANSPEED" == "" ]; then VI_FANSPEED=0; fi
 if [ "$VI_AREA" == "" ]; then VI_AREA=0; fi
 if [ "$VI_TIME" == "" ]; then VI_TIME=0; fi
 if [ "$VI_DND" == "" ]; then MINISERVER_IP=0; fi
-
 if [ "$VI_MAINBRUSH" == "" ]; then VI_MAINBRUSH=0; fi
 if [ "$VI_SIDEBRUSH" == "" ]; then VI_SIDEBRUSH=0; fi
 if [ "$VI_FILTER" == "" ]; then VI_FILTER=0; fi
 if [ "$VI_SENSOR" == "" ]; then VI_SENSOR=0; fi
-
 if [ "$VI_CH_COUNT" == "" ]; then VI_CH_COUNT=0; fi
 if [ "$VI_CH_AREA" == "" ]; then VI_CH_AREA=0; fi
 if [ "$VI_CH_TIME" == "" ]; then VI_CH_TIME=0; fi
+if [ "$ACTIVE" == "" ]; then ACTIVE=0; fi
+}
 
+if [ $1 == 1 ]; then
+ACTIVE=$R1_ACTIVE
+MI_ROBO_IP=$R1_MI_ROBO_IP
+MI_ROBO_TOKEN=$R1_MI_ROBO_TOKEN
+SEND_STATUS=$R1_SEND_STATUS
+VTI_ERROR=$R1_VTI_ERROR
+VI_ERROR_CODE=$R1_VI_ERROR_CODE
+VTI_STATE=$R1_VTI_STATE
+VI_STATE_CODE=$R1_VI_STATE_CODE
+VI_BATTERY=$R1_VI_BATTERY
+VI_FANSPEED=$R1_VI_FANSPEED
+VI_AREA=$R1_VI_AREA
+VI_TIME=$R1_VI_TIME
+VI_DND=$R1_VI_DND
+SEND_CONSUMABLES=$R1_SEND_CONSUMABLES
+VI_MAINBRUSH=$R1_VI_MAINBRUSH
+VI_SIDEBRUSH=$R1_VI_SIDEBRUSH
+VI_FILTER=$R1_VI_FILTER
+VI_SENSOR=$R1_VI_SENSOR
+SEND_CLEANING_HISTORY=$R1_SEND_CLEANING_HISTORY
+VI_CH_COUNT=$R1_VI_CH_COUNT
+VI_CH_AREA=$R1_VI_CH_AREA
+VI_CH_TIME=$R1_VI_CH_TIME
+fi
+
+if [ $1 == 2 ]; then
+ACTIVE=$R2_ACTIVE
+MI_ROBO_IP=$R2_MI_ROBO_IP
+MI_ROBO_TOKEN=$R2_MI_ROBO_TOKEN
+SEND_STATUS=$R2_SEND_STATUS
+VTI_ERROR=$R2_VTI_ERROR
+VI_ERROR_CODE=$R2_VI_ERROR_CODE
+VTI_STATE=$R2_VTI_STATE
+VI_STATE_CODE=$R2_VI_STATE_CODE
+VI_BATTERY=$R2_VI_BATTERY
+VI_FANSPEED=$R2_VI_FANSPEED
+VI_AREA=$R2_VI_AREA
+VI_TIME=$R2_VI_TIME
+VI_DND=$R2_VI_DND
+SEND_CONSUMABLES=$R2_SEND_CONSUMABLES
+VI_MAINBRUSH=$R2_VI_MAINBRUSH
+VI_SIDEBRUSH=$R2_VI_SIDEBRUSH
+VI_FILTER=$R2_VI_FILTER
+VI_SENSOR=$R2_VI_SENSOR
+SEND_CLEANING_HISTORY=$R2_SEND_CLEANING_HISTORY
+VI_CH_COUNT=$R2_VI_CH_COUNT
+VI_CH_AREA=$R2_VI_CH_AREA
+VI_CH_TIME=$R2_VI_CH_TIME
+fi
+
+if [ $1 == 3 ]; then
+ACTIVE=$R3_ACTIVE
+MI_ROBO_IP=$R3_MI_ROBO_IP
+MI_ROBO_TOKEN=$R3_MI_ROBO_TOKEN
+SEND_STATUS=$R3_SEND_STATUS
+VTI_ERROR=$R3_VTI_ERROR
+VI_ERROR_CODE=$R3_VI_ERROR_CODE
+VTI_STATE=$R3_VTI_STATE
+VI_STATE_CODE=$R3_VI_STATE_CODE
+VI_BATTERY=$R3_VI_BATTERY
+VI_FANSPEED=$R3_VI_FANSPEED
+VI_AREA=$R3_VI_AREA
+VI_TIME=$R3_VI_TIME
+VI_DND=$R3_VI_DND
+SEND_CONSUMABLES=$R3_SEND_CONSUMABLES
+VI_MAINBRUSH=$R3_VI_MAINBRUSH
+VI_SIDEBRUSH=$R3_VI_SIDEBRUSH
+VI_FILTER=$R3_VI_FILTER
+VI_SENSOR=$R3_VI_SENSOR
+SEND_CLEANING_HISTORY=$R3_SEND_CLEANING_HISTORY
+VI_CH_COUNT=$R3_VI_CH_COUNT
+VI_CH_AREA=$R3_VI_CH_AREA
+VI_CH_TIME=$R3_VI_CH_TIME
+fi
+
+cfg_check
+
+if [ $1 == 1 ]; then
+source "/mnt/mi2l_ramdisk/robot1.tmp"
+error_txt_tmp=$r1_error_txt_tmp
+error_code_tmp=$r1_error_code_tmp
+state_txt_tmp=$r1_state_txt_tmp
+state_code_tmp=$r1_state_code_tmp
+battery_tmp=$r1_battery_tmp
+fan_power_tmp=$r1_fan_power_tmp
+clean_time_tmp=$r1_clean_time_tmp
+clean_area_tmp=$r1_clean_area_tmp
+dnd_enabled_tmp=$r1_dnd_enabled_tmp
+main_brush_work_time_tmp=$r1_main_brush_work_time_tmp
+side_brush_work_time_tmp=$r1_side_brush_work_time_tmp
+filter_work_time_tmp=$r1_filter_work_time_tmp
+sensor_dirty_time_tmp=$r1_sensor_dirty_time_tmp
+total_cleanups_tmp=$r1_total_cleanups_tmp
+total_cleaning_time_tmp=$r1_total_cleaning_time_tmp
+total_cleaning_area_tmp=$r1_total_cleaning_area_tmp
+fi
+if [ $1 == 2 ]; then
+source "/mnt/mi2l_ramdisk/robot2.tmp"
+error_txt_tmp=$r2_error_txt_tmp
+error_code_tmp=$r2_error_code_tmp
+state_txt_tmp=$r2_state_txt_tmp
+state_code_tmp=$r2_state_code_tmp
+battery_tmp=$r2_battery_tmp
+fan_power_tmp=$r2_fan_power_tmp
+clean_time_tmp=$r2_clean_time_tmp
+clean_area_tmp=$r2_clean_area_tmp
+dnd_enabled_tmp=$r2_dnd_enabled_tmp
+main_brush_work_time_tmp=$r2_main_brush_work_time_tmp
+side_brush_work_time_tmp=$r2_side_brush_work_time_tmp
+filter_work_time_tmp=$r2_filter_work_time_tmp
+sensor_dirty_time_tmp=$r2_sensor_dirty_time_tmp
+total_cleanups_tmp=$r2_total_cleanups_tmp
+total_cleaning_time_tmp=$r2_total_cleaning_time_tmp
+total_cleaning_area_tmp=$r2_total_cleaning_area_tmp
+fi
+if [ $1 == 3 ]; then
+source "/mnt/mi2l_ramdisk/robot3.tmp"
+error_txt_tmp=$r3_error_txt_tmp
+error_code_tmp=$r3_error_code_tmp
+state_txt_tmp=$r3_state_txt_tmp
+state_code_tmp=$r3_state_code_tmp
+battery_tmp=$r3_battery_tmp
+fan_power_tmp=$r3_fan_power_tmp
+clean_time_tmp=$r3_clean_time_tmp
+clean_area_tmp=$r3_clean_area_tmp
+dnd_enabled_tmp=$r3_dnd_enabled_tmp
+main_brush_work_time_tmp=$r3_main_brush_work_time_tmp
+side_brush_work_time_tmp=$r3_side_brush_work_time_tmp
+filter_work_time_tmp=$r3_filter_work_time_tmp
+sensor_dirty_time_tmp=$r3_sensor_dirty_time_tmp
+total_cleanups_tmp=$r3_total_cleanups_tmp
+total_cleaning_time_tmp=$r3_total_cleaning_time_tmp
+total_cleaning_area_tmp=$r3_total_cleaning_area_tmp
+fi
+
+
+if [ "$DEBUG" == "1" ]; then
+echo "ROBOT $1" >> $LOGFILE
+echo "-----------------------------" >> $LOGFILE
+fi
 #Status
 status(){
 json=`mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN raw_command get_status`
+if [ "$DEBUG" == "1" ]; then
+echo "$D GET DATA STATUS: $json " >> $LOGFILE
+fi
 echo $json
 json_c=`echo $json | sed 's/[^a-zA-Z0-9 :,_]//g'`
 battery=${json_c#*battery: } 
@@ -95,6 +241,9 @@ fi
 #Consumable
 consumables(){
 json=`mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN raw_command get_consumable`
+if [ "$DEBUG" == "1" ]; then
+echo "$D GET DATA CONSUMABLES: $json " >> $LOGFILE
+fi
 echo $json
 json_c=`echo $json | sed 's/[^a-zA-Z0-9 :,_]//g'`
 main_brush_work_time=${json_c#*main_brush_work_time: } 
@@ -114,6 +263,9 @@ sensor_dirty_time=`echo "scale=0; $sensor_dirty_time / 60 / 60" | bc`
 #Cleaning Summary
 clean_sum(){
 json=`mirobo --ip $MI_ROBO_IP --token $MI_ROBO_TOKEN raw_command get_clean_summary`
+if [ "$DEBUG" == "1" ]; then
+echo "$D GET DATA CLEANING HISTORY: $json " >> $LOGFILE
+fi
 echo $json
 json_c=`echo $json | sed 's/[^0-9,]//g'`
 total_cleaning_time=$(echo $json_c | awk -F, '{print $1}')
@@ -127,8 +279,15 @@ check_connection(){
 	up=`fping -r 5 $MI_ROBO_IP 2>&1 | grep -c 'alive'`
 if [ $up == 1 ]; then
     serverok="1"
+if [ "$DEBUG" == "1" ]; then
+echo "$D Robot reachable" >> $LOGFILE
+fi	
     else
     serverok="0"
+if [ "$DEBUG" == "1" ]; then
+echo "$D Robot not reachable" >> $LOGFILE
+fi
+
 fi
 }
 
@@ -137,7 +296,7 @@ check_connection
 if [ $serverok == "1" ]; then
 status
 else
-echo "Status: Robot not reachable"
+echo "Status: Robot not reachable" 
 if [ $LANGUAGE == "de" ]; then
 state_txt=${state_txt_de[11]}
 error_txt=${error_txt_de[20]}
@@ -153,49 +312,108 @@ state_code="20"
 fi
 if [ "$error_txt_tmp" != "$error_txt" ] && [ $VTI_ERROR != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VTI$VTI_ERROR/"$error_txt")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND ERROR (VTI:$VTI_ERROR): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
+
 if [ "$error_code_tmp" != "$error_code" ] && [ $VI_ERROR_CODE != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_ERROR_CODE/"$error_code")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND ERROR_CODE (VI:$VI_ERROR_CODE): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
+
 if [ "$state_txt_tmp" != "$state_txt" ] && [ $VTI_STATE != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VTI$VTI_STATE/"$state_txt")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND STATUS (VTI:$VTI_STATE): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
+
 if [ "$state_code_tmp" != "$state_code" ] && [ $VI_STATE_CODE != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_STATE_CODE/"$state_code")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND STATUS_CODE (VI:$VI_STATE_CODE): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
+
 if [ "$battery_tmp" != "$battery" ] && [ $VI_BATTERY != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_BATTERY/"$battery")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND BATTERY (VI:$VTI_BATTERY): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
+
 if [ "$fan_power_tmp" != "$fan_power" ] && [ $VI_FANSPEED != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_FANSPEED/"$fan_power")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND FANSPEED (VI:$VI_FANSPEED): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
+
 if [ "$clean_time_tmp" != "$clean_time" ] && [ $VI_TIME != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_TIME/"$clean_time")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND TIME (VI:$VI_TIME): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
+
 if [ "$clean_area_tmp" != "$clean_area" ] && [ $VI_AREA != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_AREA/"$clean_area")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND AREA (VI:$VI_AREA): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
+
 if [ "$dnd_enabled_tmp" != "$dnd_enabled" ] && [ $VI_DND != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_DND/"$dnd_enabled")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND DND (VI:$VI_DND): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
-error_txt_tmp=$error_txt
-error_code_tmp=$error_code_txt
-state_txt_tmp=$state_txt
-state_code_tmp=$state_code_txt
-battery_tmp=$battery
-fan_power_tmp=$fan_power
-clean_time_tmp=$clean_time
-clean_area_tmp=$clean_area
-dnd_enabled_tmp=$dnd_enabled
+if [ $1 == 1 ]; then
+echo r1_error_txt_tmp="\"$error_txt\"" > $RAMDISK/robot1.tmp
+echo r1_error_code_tmp=$error_code >> $RAMDISK/robot1.tmp
+echo r1_state_txt_tmp="\"$state_txt\"" >> $RAMDISK/robot1.tmp
+echo r1_state_code_tmp=$state_code >> $RAMDISK/robot1.tmp
+echo r1_battery_tmp=$battery >> $RAMDISK/robot1.tmp
+echo r1_fan_power_tmp=$fan_power >> $RAMDISK/robot1.tmp
+echo r1_clean_time_tmp=$clean_time >> $RAMDISK/robot1.tmp
+echo r1_clean_area_tmp=$clean_area >> $RAMDISK/robot1.tmp
+echo r1_dnd_enabled_tmp=$dnd_enabled >> $RAMDISK/robot1.tmp
+fi
+if [ $1 == 2 ]; then
+echo r2_error_txt_tmp="\"$error_txt\"" > $RAMDISK/robot3.tmp
+echo r2_error_code_tmp=$error_code >> $RAMDISK/robot3.tmp
+echo r2_state_txt_tmp="\"$state_txt\"" >> $RAMDISK/robot3.tmp
+echo r2_state_code_tmp=$state_code >> $RAMDISK/robot3.tmp
+echo r2_battery_tmp=$battery >> $RAMDISK/robot3.tmp
+echo r2_fan_power_tmp=$fan_power >> $RAMDISK/robot3.tmp
+echo r2_clean_time_tmp=$clean_time >> $RAMDISK/robot3.tmp
+echo r2_clean_area_tmp=$clean_area >> $RAMDISK/robot3.tmp
+echo r2_dnd_enabled_tmp=$dnd_enabled >> $RAMDISK/robot3.tmp
+fi
+if [ $1 == 3 ]; then
+echo r3_error_txt_tmp="\"$error_txt\"" > $RAMDISK/robot3.tmp
+echo r3_error_code_tmp=$error_code >> $RAMDISK/robot3.tmp
+echo r3_state_txt_tmp="\"$state_txt\"" >> $RAMDISK/robot3.tmp
+echo r3_state_code_tmp=$state_code >> $RAMDISK/robot3.tmp
+echo r3_battery_tmp=$battery >> $RAMDISK/robot3.tmp
+echo r3_fan_power_tmp=$fan_power >> $RAMDISK/robot3.tmp
+echo r3_clean_time_tmp=$clean_time >> $RAMDISK/robot3.tmp
+echo r3_clean_area_tmp=$clean_area >> $RAMDISK/robot3.tmp
+echo r3_dnd_enabled_tmp=$dnd_enabled >> $RAMDISK/robot3.tmp
+fi
 fi
 
 if [ $SEND_CONSUMABLES == "1" ]; then
@@ -207,24 +425,54 @@ echo "Consumables: Robot not reachable"
 fi
 if [ "$main_brush_work_time_tmp" != "$main_brush_work_time" ] && [ $VI_MAINBRUSH != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_MAINBRUSH/"$main_brush_work_time")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND MAINBRUSH (VI:$VI_MAINBRUSH): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
 if [ "$side_brush_work_time_tmp" != "$side_brush_work_time" ] && [ $VI_SIDEBRUSH != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_SIDEBRUSH/"$side_brush_work_time")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND SIDEBRUSH (VI:$VI_SIDEBRUSH): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
 if [ "$filter_work_time_tmp" != "$filter_work_time" ] && [ $VI_FILTER != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_FILTER/"$filter_work_time")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND FILTER (VI:$VI_FILTER): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
 if [ "$sensor_dirty_time_tmp" != "$sensor_dirty_time" ] && [ $VI_SENSOR != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_SENSOR/"$sensor_dirty_time")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND SENSOR (VI:$VI_SENSOR): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
-main_brush_work_time_tmp=$main_brush_work_time
-side_brush_work_time_tmp=$side_brush_work_time
-filter_work_time_tmp=$filter_work_time
-sensor_dirty_time_tmp=$sensor_dirty_time
+if [ $1 == 1 ]; then
+echo r1_main_brush_work_time_tmp=$main_brush_work_time >> $RAMDISK/robot1.tmp
+echo r1_side_brush_work_time_tmp=$side_brush_work_time >> $RAMDISK/robot1.tmp
+echo r1_filter_work_time_tmp=$filter_work_time >> $RAMDISK/robot1.tmp
+echo r1_sensor_dirty_time_tmp=$sensor_dirty_time >> $RAMDISK/robot1.tmp
+fi
+if [ $1 == 2 ]; then
+echo r2_main_brush_work_time_tmp=$main_brush_work_time >> $RAMDISK/robot2.tmp
+echo r2_side_brush_work_time_tmp=$side_brush_work_time >> $RAMDISK/robot2.tmp
+echo r2_filter_work_time_tmp=$filter_work_time >> $RAMDISK/robot2.tmp
+echo r2_sensor_dirty_time_tmp=$sensor_dirty_time >> $RAMDISK/robot2.tmp
+fi
+if [ $1 == 3 ]; then
+echo r3_main_brush_work_time_tmp=$main_brush_work_time >> $RAMDISK/robot3.tmp
+echo r3_side_brush_work_time_tmp=$side_brush_work_time >> $RAMDISK/robot3.tmp
+echo r3_filter_work_time_tmp=$filter_work_time >> $RAMDISK/robot3.tmp
+echo r3_sensor_dirty_time_tmp=$sensor_dirty_time >> $RAMDISK/robot3.tmp
+fi
+
+
+
+
 fi
 
 if [ $SEND_CLEANING_HISTORY == "1" ]; then
@@ -236,17 +484,42 @@ echo "Cleaning History: Robot not reachable"
 fi
 if [ "$total_cleanups_tmp" != "$total_cleanups" ] && [ $VI_CH_COUNT != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_CH_COUNT/"$total_cleanups")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND CH_COUNT (VI:$VI_CH_COUNT): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
 if [ "$total_cleaning_time_tmp" != "$total_cleaning_time" ] && [ $VI_CH_TIME != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_CH_TIME/"$total_cleaning_time")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND CH_TIME (VI:$VI_CH_TIME): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
 if [ "$total_cleaning_area_tmp" != "$total_cleaning_area" ] && [ $VI_CH_AREA != "0" ]; then
 output_tmp=$(wget -t 1 -T $timeout -4 -q -O - --user $MINISERVER_USER --password $MINISERVER_PASS http://$MINISERVER_IP/dev/sps/io/VI$VI_CH_AREA/"$total_cleaning_area")
+if [ "$DEBUG" == "1" ]; then
+echo "$D SEND CH_AREA (VI:$VI_CH_AREA): $output_tmp " >> $LOGFILE
+fi
 sleep 0.1
 fi
-total_cleanups_tmp=$total_cleanups
-total_cleaning_time_tmp=$total_cleaning_time
-total_cleaning_area_tmp=$total_cleaning_area
+if [ $1 == 1 ]; then
+echo r1_total_cleanups_tmp=$total_cleanups >> $RAMDISK/robot1.tmp
+echo r1_total_cleaning_time_tmp=$total_cleaning_time >> $RAMDISK/robot1.tmp
+echo r1_total_cleaning_area_tmp=$total_cleaning_area >> $RAMDISK/robot1.tmp
+fi
+if [ $1 == 2 ]; then
+echo r2_total_cleanups_tmp=$total_cleanups >> $RAMDISK/robot2.tmp
+echo r2_total_cleaning_time_tmp=$total_cleaning_time >> $RAMDISK/robot2.tmp
+echo r2total_cleaning_area_tmp=$total_cleaning_area >> $RAMDISK/robot2.tmp
+fi
+if [ $1 == 3 ]; then
+echo r3_total_cleanups_tmp=$total_cleanups >> $RAMDISK/robot3.tmp
+echo r3_total_cleaning_time_tmp=$total_cleaning_time >> $RAMDISK/robot3.tmp
+echo r3_total_cleaning_area_tmp=$total_cleaning_area >> $RAMDISK/robot3.tmp
+fi
+
+fi
+if [ "$DEBUG" == "1" ]; then
+echo "-----------------------------" >> $LOGFILE
 fi

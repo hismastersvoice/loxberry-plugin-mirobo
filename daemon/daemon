@@ -6,37 +6,80 @@ SCRIPTNAME1="mirobo_2_lox"
 SCRIPTPATH1="/opt/loxberry/data/plugins/mirobot2lox"
 SCRIPTNAME2="udp_reci"
 SCRIPTPATH2="/opt/loxberry/data/plugins/mirobot2lox"
+LOGFILE="/opt/loxberry/log/plugins/mirobot2lox/mirobot2lox.log"
 D=`date "+%b %d %H:%M:%S"`
 
 #Install with root permission
 installed_st=$(pip3 list | grep "setuptools" | grep -v grep | wc -l)
 installed_pm=$(pip3 list | grep "python-mirobo" | grep -v grep | wc -l)
-
+installed_zc=$(pip3 list | grep "zeroconf" | grep -v grep | wc -l)
 if [ $installed_st -eq "0" ]; then
+echo "$D Setup-Check at boot --  Start installing Setuptools" >> $LOGFILE
 pip3 install -U pip setuptools
-echo "$D setuptools installed" >> /var/log/mirobo2lox.log
+installed_st=$(pip3 list | grep "setuptools" | grep -v grep | wc -l)
+if [ $installed_st -ne "0" ]; then
+echo "$D Setup-Check at boot --  setuptools installed" >> $LOGFILE
+else
+echo "$D !!!! Setup-Check at boot --  setuptools  installation failed !!!!" >> $LOGFILE
+fi 
+else
+echo "$D Setup-Check at boot --  setuptools already installed" >> $LOGFILE
 fi
 if [ $installed_pm -eq "0" ]; then
-pip3 install python-mirobo
-echo "$D python-mirobo installed" >> /var/log/mirobo2lox.log
+echo "$D Setup-Check at boot --  Start installing python-mirobot" >> $LOGFILE
+pip3 install -U python-mirobo
+installed_pm=$(pip3 list | grep "python-mirobo" | grep -v grep | wc -l)
+if [ $installed_pm -ne "0" ]; then
+echo "$D Setup-Check at boot -- python-mirobo installed" >> $LOGFILE
+else
+echo "$D !!!! Setup-Check at boot --  python-mirobo installation failed !!!!" >> $LOGFILE
+fi 
+else
+echo "$D Setup-Check at boot --  python-mirobo already installed" >> $LOGFILE
 fi
 
+
+if [ $installed_zc -eq "0" ]; then
+echo "$D Setup-Check at boot --  Start installing zeroconf" >> $LOGFILE
+pip3 install -U zeroconf
+installed_zc=$(pip3 list | grep "zeroconf" | grep -v grep | wc -l)
+if [ $installed_zc -ne "0" ]; then
+echo "$D Setup-Check at boot -- zeroconf installed" >> $LOGFILE
+else
+echo "$D !!!! Setup-Check at boot --  zeroconf installation failed !!!!" >> $LOGFILE
+fi 
+else
+echo "$D Setup-Check at boot --  zeroconf already installed" >> $LOGFILE
+fi
+
+
 #Install ini.d-Services
-FOLDER_INIT="/opt/loxberry/data/plugins/mirobot2lox"
+FOLDER_INIT="/opt/loxberry/data/plugins/mirobot2lox/init.d"
 if [ -d $FOLDER_INIT ]; then	
-cp -rf $FOLDER_INIT/init.d /etc/
+cp -rf $FOLDER_INIT /etc/
 chmod 0755 /etc/init.d/mirobo2lox
 chmod 0755 /opt/loxberry/data/plugins/mirobot2lox/mirobo_2_lox
 chmod 0755 /opt/loxberry/data/plugins/mirobot2lox/mirobo_2_lox_gsd
 chmod 0755 /opt/loxberry/data/plugins/mirobot2lox/udp_reci
-rm -rf $FOLDER_INIT/init.d/*.*
-rm -rf $FOLDER_INIT/init.d/	
-
-echo "$D MiRobo2Lox - Services installed" >> /var/log/mirobo2lox.log
+rm -rf $FOLDER_INIT*.*
+rm -rf $FOLDER_INIT	
+echo "$D MiRobo2Lox - Services installed" >> $LOGFILE
 update-rc.d mirobo2lox defaults 99
 systemctl daemon-reload
 fi
-service mirobo2lox start
 
+#Start Services if not already started
+pid1=$(ps -eo pid,command | grep "$SCRIPTNAME1" | grep -v grep | wc -l)
+pid2=$(ps -eo pid,command | grep "$SCRIPTNAME2" | grep -v grep | wc -l)
+echo $pid1
+echo $pid2
+if [ "$pid1" -lt "1" ]; then
+service mirobo2lox start echo 
+echo "$D Service $NAME1 wurde durch Daemon gestartet" >> $LOGFILE
+fi
+if [ "$pid2" -lt "1" ]; then
+service mirobo2lox start echo 
+echo "$D Service $NAME2 wurde durch Daemon gestartet" >> $LOGFILE
+fi
 
 exit 0 
